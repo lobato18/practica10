@@ -1,0 +1,21 @@
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8081:80"  # Nginx escucha en el 8080 de tu PC y lo pasa al 80 interno
+    depends_on:
+      - api
+
+  api:
+    build: .
+    # Sin puertos mapeados: solo accesible por Nginx mediante la red interna
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    # Sin puertos mapeados: invisible para el navegador y herramientas externas
